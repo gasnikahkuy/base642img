@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 to Image Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #imagePreview {
+            margin-top: 10px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        #imagePreview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Base64 to Image Converter</h1>
+    <input type="file" id="fileInput" accept=".txt"><br>
+    <button onclick="convertAndDisplay()">Convert and Display Image</button>
+    <div id="imagePreview">Image will be displayed here</div>
+    <button id="downloadButton" style="display:none;" onclick="downloadImage()">Download Image</button>
+
+    <script>
+        let imageBase64 = '';
+        let originalFileName = '';
+
+        function convertAndDisplay() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select a Base64 text file.");
+                return;
+            }
+
+            originalFileName = file.name.split('.')[0]; // Get the file name without extension
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                imageBase64 = e.target.result;
+
+                // Display the image
+                const imagePreview = document.getElementById('imagePreview');
+                const imgElement = document.createElement('img');
+                imgElement.src = "data:image/png;base64," + imageBase64;
+                imagePreview.innerHTML = '';  // Clear any existing content
+                imagePreview.appendChild(imgElement);
+
+                // Show download button
+                document.getElementById('downloadButton').style.display = 'block';
+            };
+
+            reader.readAsText(file);
+        }
+
+        function downloadImage() {
+            const element = document.createElement('a');
+            element.href = "data:image/png;base64," + imageBase64;
+            element.download = originalFileName + ".png";  // Save as the original file name with a .png extension
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+
+</body>
+</html>
